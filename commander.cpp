@@ -220,9 +220,9 @@ const bool CCommander::openCopyMenu(void) const
         l_dialog.addOption(m_panelSource == &m_panelLeft ? "Copy >" : "< Copy");
         l_dialog.addOption(m_panelSource == &m_panelLeft ? "Move >" : "< Move");
         if (l_rename)
-            l_dialog.addOption("Rename");
-        l_dialog.addOption("Delete");
-        l_dialog.addOption("Disk used");
+            l_dialog.addOption("이름변경");
+        l_dialog.addOption("삭제");
+        l_dialog.addOption("디스크 사용률");
         l_dialog.init();
         do
         {
@@ -231,8 +231,8 @@ const bool CCommander::openCopyMenu(void) const
             if (l_dialogRetVal == 3 + l_rename)
             {
                 CDialog l_dialog2("", l_dialog.getX() + l_dialog.getImage()->w - DIALOG_BORDER, l_dialog.getY() + DIALOG_BORDER + (l_dialog.getHighlightedIndex() + 1) * LINE_HEIGHT);
-                l_dialog2.addOption("Yes");
-                l_dialog2.addOption("No");
+                l_dialog2.addOption("예");
+                l_dialog2.addOption("아니오");
                 l_dialog2.init();
                 if (l_dialog2.execute() != 1)
                     l_loop = true;
@@ -302,12 +302,12 @@ const bool CCommander::openSystemMenu(void)
     int l_dialogRetVal(0);
     // Selection dialog
     {
-        CDialog l_dialog("System:", 0, Y_LIST + m_panelSource->getHighlightedIndexRelative() * LINE_HEIGHT);
-        l_dialog.addOption("Select all");
-        l_dialog.addOption("Select none");
-        l_dialog.addOption("New directory");
-        l_dialog.addOption("Disk info");
-        l_dialog.addOption("Quit");
+        CDialog l_dialog("시스템:", 0, Y_LIST + m_panelSource->getHighlightedIndexRelative() * LINE_HEIGHT);
+        l_dialog.addOption("전체 선택");
+        l_dialog.addOption("선택 없음");
+        l_dialog.addOption("새 폴더");
+        l_dialog.addOption("디스크 정보");
+        l_dialog.addOption("종료");
         l_dialog.init();
         l_dialogRetVal = l_dialog.execute();
     }
@@ -352,8 +352,9 @@ void CCommander::openExecuteMenu(void) const
     // Dialog
     {
         CDialog l_dialog(m_panelSource->getHighlightedItem() + ":", 0, Y_LIST + m_panelSource->getHighlightedIndexRelative() * LINE_HEIGHT);
-        l_dialog.addOption("View");
-        l_dialog.addOption("Execute");
+        l_dialog.addOption("파일 내용 보기");
+        l_dialog.addOption("실행");
+        l_dialog.addOption("압축 해제");
         l_dialog.init();
         l_dialogRetVal = l_dialog.execute();
     }
@@ -369,8 +370,8 @@ void CCommander::openExecuteMenu(void) const
                 if (File_utils::getFileSize(l_file) > VIEWER_SIZE_MAX)
                 {
                     // File is too big to be viewed!
-                    CDialog l_dialog("Error:", 0, 0);
-                    l_dialog.addLabel("File is too big!");
+                    CDialog l_dialog("에러:", 0, 0);
+                    l_dialog.addLabel("파일이 너무 큽니다!");
                     l_dialog.addOption("OK");
                     l_dialog.init();
                     l_dialog.execute();
@@ -385,6 +386,10 @@ void CCommander::openExecuteMenu(void) const
         case 2:
             // Execute
             File_utils::executeFile(m_panelSource->getHighlightedItemFull());
+            break;
+        case 3:
+            // 압축 해제
+            //File_utils::executeFile(m_panelSource->getHighlightedItemFull());
             break;
         default:
             break;
