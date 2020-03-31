@@ -222,7 +222,7 @@ const bool CCommander::openCopyMenu(void) const
         if (l_rename)
             l_dialog.addOption("이름변경");
         l_dialog.addOption("삭제");
-        l_dialog.addOption("디스크 사용률");
+        l_dialog.addOption("선택 파일 용량");
         l_dialog.init();
         do
         {
@@ -306,7 +306,7 @@ const bool CCommander::openSystemMenu(void)
         l_dialog.addOption("전체 선택");
         l_dialog.addOption("선택 없음");
         l_dialog.addOption("새 폴더");
-        l_dialog.addOption("디스크 정보");
+        l_dialog.addOption("전체 용량 정보");
         l_dialog.addOption("종료");
         l_dialog.init();
         l_dialogRetVal = l_dialog.execute();
