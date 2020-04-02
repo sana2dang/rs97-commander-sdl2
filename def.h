@@ -5,10 +5,10 @@
 #define INHIBIT(X) /* X */
 
 #ifndef PPU_Y
-#define PPU_Y 1
+#define PPU_Y 1.5
 #endif
 #ifndef PPU_X
-#define PPU_X 1
+#define PPU_X 1.5
 #endif
 
 #ifndef RES_DIR
@@ -17,12 +17,12 @@
 
 #ifndef SCREEN_WIDTH
 // #define SCREEN_WIDTH 320
-#define SCREEN_WIDTH 480
+#define SCREEN_WIDTH 320
 #endif
 
 #ifndef SCREEN_HEIGHT
 // #define SCREEN_HEIGHT 240
-#define SCREEN_HEIGHT 320
+#define SCREEN_HEIGHT 214
 #endif
 
 #ifndef SCREEN_BPP
@@ -42,7 +42,7 @@
 #endif
 
 #ifndef FILE_SYSTEM
-#define FILE_SYSTEM "/dev/sda4"
+#define FILE_SYSTEM "/dev/mmcblk0p2"
 #endif
 
 // Panel

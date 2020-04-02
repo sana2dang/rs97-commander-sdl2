@@ -217,12 +217,13 @@ const bool CCommander::openCopyMenu(void) const
         l_stream << l_list.size() << " selected:";
         // File operation dialog
         CDialog l_dialog(l_stream.str(), 0, Y_LIST + m_panelSource->getHighlightedIndexRelative() * LINE_HEIGHT);
-        l_dialog.addOption(m_panelSource == &m_panelLeft ? "Copy >" : "< Copy");
-        l_dialog.addOption(m_panelSource == &m_panelLeft ? "Move >" : "< Move");
+        l_dialog.addOption(m_panelSource == &m_panelLeft ? "복사 >" : "< 복사");
+        l_dialog.addOption(m_panelSource == &m_panelLeft ? "이동 >" : "< 이동");
         if (l_rename)
             l_dialog.addOption("이름변경");
         l_dialog.addOption("삭제");
         l_dialog.addOption("선택 파일 용량");
+        l_dialog.addOption("압축 해제");
         l_dialog.init();
         do
         {
@@ -290,6 +291,15 @@ printf("Done removing file.");
                 // Disk used
                 File_utils::diskUsed(l_list);
             break;
+        case 6:
+            if (l_rename)
+            {
+                // 압축 해제
+                File_utils::decompressionFile(m_panelSource->getHighlightedItemFull());
+                l_ret = true;
+            }
+
+            break;
         default:
             break;
     }
@@ -354,7 +364,6 @@ void CCommander::openExecuteMenu(void) const
         CDialog l_dialog(m_panelSource->getHighlightedItem() + ":", 0, Y_LIST + m_panelSource->getHighlightedIndexRelative() * LINE_HEIGHT);
         l_dialog.addOption("파일 내용 보기");
         l_dialog.addOption("실행");
-        l_dialog.addOption("압축 해제");
         l_dialog.init();
         l_dialogRetVal = l_dialog.execute();
     }
@@ -366,7 +375,7 @@ void CCommander::openExecuteMenu(void) const
             {
                 // Check size
                 const std::string l_file(m_panelSource->getHighlightedItemFull());
-                INHIBIT(std::cout << "File size: " << File_utils::getFileSize(l_file) << std::endl;)
+                INHIBIT(std::cout << "파일 사이즈: " << File_utils::getFileSize(l_file) << std::endl;)
                 if (File_utils::getFileSize(l_file) > VIEWER_SIZE_MAX)
                 {
                     // File is too big to be viewed!
@@ -386,10 +395,6 @@ void CCommander::openExecuteMenu(void) const
         case 2:
             // Execute
             File_utils::executeFile(m_panelSource->getHighlightedItemFull());
-            break;
-        case 3:
-            // 압축 해제
-            //File_utils::executeFile(m_panelSource->getHighlightedItemFull());
             break;
         default:
             break;

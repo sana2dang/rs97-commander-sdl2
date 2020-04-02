@@ -14,10 +14,10 @@ INCLUDE =  $(shell sdl2-config --cflags)
 LIB = $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_gfx
 
 all:$(OBJS)
-	arm-linux-gnueabihf-$(CC) $(OBJS) -o $(target) $(LIB)
+	$(CC) $(OBJS) -o $(target) $(LIB)
 
 %.o:%.cpp
-	arm-linux-gnueabihf-$(CC) -DRESDIR="\"$(RESDIR)\"" -DODROID_GO_ADVANCE  -c $< -o $@  $(INCLUDE) 
+	$(CC) -DRESDIR="\"$(RESDIR)\"" -DODROID_GO_ADVANCE  -c $< -o $@  $(INCLUDE) 
 
 clean:
 	rm $(OBJS) $(target) -f

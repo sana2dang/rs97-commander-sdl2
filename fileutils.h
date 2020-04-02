@@ -14,6 +14,8 @@ namespace File_utils
 
     void removeFile(const std::vector<std::string> &p_files);
 
+    void decompressionFile(const std::string &p_file);
+
     void executeFile(const std::string &p_file);
 
     void makeDirectory(const std::string &p_file);

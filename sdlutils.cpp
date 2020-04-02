@@ -63,7 +63,7 @@ TTF_Font *SDL_utils::loadFont(const std::string &p_font, const int p_size)
 {
     INHIBIT(std::cout << "SDL_utils::loadFont(" << p_font << ", " << p_size << ")" << std::endl;)
     //TTF_Font *l_font = TTF_OpenFontDPI(p_font.c_str(), p_size, 72 * screen.ppu_x, 72 * screen.ppu_y);
-    TTF_Font *l_font = TTF_OpenFont(p_font.c_str(), p_size);
+    TTF_Font *l_font = TTF_OpenFont(p_font.c_str(), p_size*2);
     if (l_font == NULL)
         std::cerr << "SDL_utils::loadFont: " << SDL_GetError() << std::endl;
     return l_font;

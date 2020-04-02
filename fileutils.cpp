@@ -28,7 +28,7 @@ int WaitPid(pid_t id)
         usleep(50 * 1000);
     if (1 != WIFEXITED(status) || 0 != WEXITSTATUS(status))
     {
-        perror("Child process error");
+        perror("하위 프로세스 오류");
         return -1;
     }
     return 0;
@@ -116,12 +116,12 @@ void File_utils::copyFile(const std::vector<std::string> &p_src, const std::stri
             if (fileExists(l_destFile))
             {
                 INHIBIT(std::cout << "File " << l_destFile << " already exists => ask for confirmation" << std::endl;)
-                CDialog l_dialog("Question:", 0, 0);
-                l_dialog.addLabel("Overwrite " + l_fileName + "?");
-                l_dialog.addOption("Yes");
-                l_dialog.addOption("Yes to all");
-                l_dialog.addOption("No");
-                l_dialog.addOption("Cancel");
+                CDialog l_dialog("질문:", 0, 0);
+                l_dialog.addLabel(l_fileName + "을 덮어쓸까요?");
+                l_dialog.addOption("예");
+                l_dialog.addOption("모두 예");
+                l_dialog.addOption("아니오");
+                l_dialog.addOption("취소");
                 l_dialog.init();
                 switch (l_dialog.execute())
                 {
@@ -171,11 +171,12 @@ void File_utils::moveFile(const std::vector<std::string> &p_src, const std::stri
             {
                 INHIBIT(std::cout << "File " << l_destFile << " already exists => ask for confirmation" << std::endl;)
                 CDialog l_dialog("Question:", 0, 0);
-                l_dialog.addLabel("Overwrite " + l_fileName + "?");
-                l_dialog.addOption("Yes");
-                l_dialog.addOption("Yes to all");
-                l_dialog.addOption("No");
-                l_dialog.addOption("Cancel");
+                l_dialog.addLabel(l_fileName + "을 덮어쓸까요?");
+                l_dialog.addOption("예");
+                l_dialog.addOption("모두 예");
+                l_dialog.addOption("아니오");
+                l_dialog.addOption("취소");
+
                 l_dialog.init();
                 switch (l_dialog.execute())
                 {
@@ -213,10 +214,10 @@ void File_utils::renameFile(const std::string &p_file1, const std::string &p_fil
     if (fileExists(p_file2))
     {
         INHIBIT(std::cout << "File " << p_file2 << " already exists => ask for confirmation" << std::endl;)
-        CDialog l_dialog("Question:", 0, 0);
-        l_dialog.addLabel("Overwrite " + getFileName(p_file2) + "?");
-        l_dialog.addOption("Yes");
-        l_dialog.addOption("No");
+        CDialog l_dialog("질문:", 0, 0);
+        l_dialog.addLabel(getFileName(p_file2) + "을 덮어쓸까요?");
+        l_dialog.addOption("예");
+        l_dialog.addOption("아니오");
         l_dialog.init();
         if (l_dialog.execute() != 1)
             l_execute = false;
@@ -373,11 +374,11 @@ void File_utils::diskInfo(void)
         std::vector<std::string> l_tokens;
         copy(std::istream_iterator<std::string>(l_iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> >(l_tokens));
         // Display dialog
-        CDialog l_dialog("Disk information:", 0, 0);
-        l_dialog.addLabel("Size: " + l_tokens[1]);
-        l_dialog.addLabel("Used: " + l_tokens[2] + " (" + l_tokens[4] + ")");
-        l_dialog.addLabel("Available: " + l_tokens[3]);
-        l_dialog.addOption("OK");
+        CDialog l_dialog("디스크 정보:", 0, 0);
+        l_dialog.addLabel("총 용량: " + l_tokens[1]);
+        l_dialog.addLabel("사용된 용량: " + l_tokens[2] + " (" + l_tokens[4] + ")");
+        l_dialog.addLabel("여유 용량: " + l_tokens[3]);
+        l_dialog.addOption("확인");
         l_dialog.init();
         l_dialog.execute();
     }
@@ -415,11 +416,11 @@ void File_utils::diskUsed(const std::vector<std::string> &p_files)
     }
     // Dialog
     std::ostringstream l_stream;
-    CDialog l_dialog("Disk used:", 0, 0);
-    l_stream << p_files.size() << " items selected";
+    CDialog l_dialog("속성:", 0, 0);
+    l_stream << p_files.size() << "개 선택됨";
     l_dialog.addLabel(l_stream.str());
-    l_dialog.addLabel("Disk used: " + l_line);
-    l_dialog.addOption("OK");
+    l_dialog.addLabel("할당된 용량: " + l_line);
+    l_dialog.addOption("확인");
     l_dialog.init();
     l_dialog.execute();
 }
@@ -434,3 +435,12 @@ void File_utils::formatSize(std::string &p_size)
         l_i -= 3;
     }
 }
+
+
+////////////////////////////////////////////////
+void File_utils::decompressionFile(const std::string &p_file)
+{
+        chdir(getPath(p_file).c_str());
+        Run("tar", "xvfp", p_file);
+}
+///////////
