@@ -47,6 +47,37 @@ const int CWindow::execute(void)
             {
                 return m_retVal;
             }
+			else if (l_event.type == SDL_JOYHATMOTION)
+			{
+                //printf("hat:%d, %d\n",l_event.jhat.hat, l_event.jhat.value);
+                SDL_Event key_event;
+				
+				if (l_event.jhat.value != 0)
+				{
+					switch (l_event.jhat.value)
+					{
+					case SDL_HAT_UP: //up
+						key_event.key.keysym.sym = MYKEY_UP;
+						break;
+					case SDL_HAT_DOWN: //down
+						key_event.key.keysym.sym = MYKEY_DOWN;
+						break;
+					case SDL_HAT_LEFT: //left
+						key_event.key.keysym.sym = MYKEY_LEFT;
+						break;
+					case SDL_HAT_RIGHT: //right
+						key_event.key.keysym.sym = MYKEY_RIGHT;
+						break;
+	 
+					default:
+						break;
+					}
+					
+					l_render = this->keyPress(key_event);
+					if (m_retVal)
+						l_loop = false;		
+				}				
+			}
             else if(l_event.type == SDL_JOYBUTTONDOWN)
             {
 #ifdef ODROID_GO_ADVANCE
