@@ -5,10 +5,10 @@
 #define INHIBIT(X) /* X */
 
 #ifndef PPU_Y
-#define PPU_Y 1.5
+#define PPU_Y 1
 #endif
 #ifndef PPU_X
-#define PPU_X 1.5
+#define PPU_X 1
 #endif
 
 #ifndef RES_DIR
@@ -16,13 +16,11 @@
 #endif
 
 #ifndef SCREEN_WIDTH
-// #define SCREEN_WIDTH 320
 #define SCREEN_WIDTH 320
 #endif
 
 #ifndef SCREEN_HEIGHT
-// #define SCREEN_HEIGHT 240
-#define SCREEN_HEIGHT 214
+#define SCREEN_HEIGHT 240
 #endif
 
 #ifndef SCREEN_BPP
