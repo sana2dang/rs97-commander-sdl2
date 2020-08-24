@@ -148,9 +148,16 @@ int main(int argc, char** argv)
 	// for raspberry pi
 	screen.actual_w = modeInfo.width;
 	screen.actual_h = modeInfo.height;
-	screen.ppu_x = screen.actual_w / screen.w;
-	screen.ppu_y = screen.actual_h / screen.h;
 #endif
+
+#ifdef ODROID_GO_ADVANCE
+	// for odroid go advance
+	screen.actual_w = 480;
+	screen.actual_h = 320;
+#endif
+	screen.ppu_x = (float)screen.actual_w / screen.w;
+	screen.ppu_y = (float)screen.actual_h / screen.h;
+
 	
 	
 // 	const auto &best = *SDL_GetVideoInfo();
