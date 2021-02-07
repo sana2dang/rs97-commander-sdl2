@@ -155,6 +155,12 @@ int main(int argc, char** argv)
 	screen.actual_w = 480;
 	screen.actual_h = 320;
 #endif
+
+#if defined(ODROID_GO_SUPER)
+        screen.actual_w = 854;
+        screen.actual_h = 480;
+#endif
+
 	screen.ppu_x = (float)screen.actual_w / screen.w;
 	screen.ppu_y = (float)screen.actual_h / screen.h;
 
