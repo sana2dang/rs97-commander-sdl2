@@ -161,6 +161,12 @@ int main(int argc, char** argv)
         screen.actual_h = 480;
 #endif
 
+	SDL_DisplayMode DM;
+	SDL_GetCurrentDisplayMode(0, &DM);
+	printf("[trngaje] detected resolution = %d x %d\n", DM.w, DM.h);
+    screen.actual_w = DM.w;
+    screen.actual_h = DM.h;
+
 	screen.ppu_x = (float)screen.actual_w / screen.w;
 	screen.ppu_y = (float)screen.actual_h / screen.h;
 
