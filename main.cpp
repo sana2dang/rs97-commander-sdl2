@@ -11,6 +11,11 @@
 #include "resourceManager.h"
 #include "commander.h"
 
+#ifdef RPI
+// for raspberry pi
+#include "bcm_host.h"
+#endif
+
 // Globals
 SDL_Surface *ScreenSurface;
 
@@ -21,6 +26,8 @@ const SDL_Color Globals::g_colorTextTitle = {COLOR_TEXT_TITLE};
 const SDL_Color Globals::g_colorTextDir = {COLOR_TEXT_DIR};
 const SDL_Color Globals::g_colorTextSelected = {COLOR_TEXT_SELECTED};
 std::vector<CWindow *> Globals::g_windows;
+
+SDL_GameController *sdl_cntrl=NULL;
 
 namespace {
 
@@ -40,20 +47,50 @@ SDL_Surface *SetVideoMode(int width, int height, int bpp, std::uint32_t flags) {
 
 int main(int argc, char** argv)
 {
+#ifdef RPI
+	int result = 0;
+	
+	bcm_host_init();
+	DISPMANX_DISPLAY_HANDLE_T displayHandle = vc_dispmanx_display_open(0);
+    if (displayHandle == 0)
+    {
+        fprintf(stderr,
+                "%s: unable to open display %d\n",
+                basename(argv[0]),
+                0);
+
+        exit(EXIT_FAILURE);
+    }
+
+    DISPMANX_MODEINFO_T modeInfo;
+    result = vc_dispmanx_display_get_info(displayHandle, &modeInfo);
+
+    if (result != 0)
+    {
+        fprintf(stderr, "%s: unable to get display information\n", basename(argv[0]) );
+        exit(EXIT_FAILURE);
+    }
+	
+	printf("[trngaje] width=%d, height=%d\n", modeInfo.width, modeInfo.height);
+#endif
+	
     // Avoid crash due to the absence of mouse
     {
         char l_s[]="SDL_NOMOUSE=1";
         putenv(l_s);
     }
-
+	//SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
+	
     // Init SDL
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+    //SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+	SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
     if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP) == 0) {
         std::cerr << "IMG_Init failed" << std::endl;
     } else {
         // Clear the errors for image libraries that did not initialize.
         SDL_ClearError();
     }
+
 
     // Check for joystick
     if (SDL_NumJoysticks() > 0) {
@@ -72,10 +109,69 @@ int main(int argc, char** argv)
        
     }
 
+    if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
+        SDL_GameControllerClose(sdl_cntrl);
+        sdl_cntrl = NULL;
+    }
+    if (sdl_cntrl == NULL) {
+        for (int i = 0; i < SDL_NumJoysticks(); i++) {
+			const char *name = SDL_GameControllerNameForIndex(i);
+			if (name) {
+				printf("[trngaje]Joystick %i has game controller name '%s'\n", i, name);
+			} else {
+				printf("[trngaje] Joystick %i has no game controller name.\n", i);
+			}			
+            if (SDL_IsGameController(i)) {
+                sdl_cntrl = SDL_GameControllerOpen(i);
+                if (sdl_cntrl != NULL) {
+					printf("[trngaje] success\n");
+                    break;
+                }
+            }
+        }
+        if (sdl_cntrl == NULL) {
+			printf("[trngaje] sdl_cntrl is NULL\n");
+            return 1;
+        }
+	
+		printf("[trngaje] SDL_JoystickEventState=%d\n", SDL_JoystickEventState(SDL_ENABLE));
+		printf("[trngaje] SDL_GameControllerEventState=%d\n", SDL_GameControllerEventState(SDL_ENABLE));
+	}
+
     // Hide cursor before creating the output surface.
     SDL_ShowCursor(SDL_DISABLE);
 
+
+	
     // Screen
+#ifdef RPI
+	// for raspberry pi
+	screen.actual_w = modeInfo.width;
+	screen.actual_h = modeInfo.height;
+#endif
+
+#ifdef ODROID_GO_ADVANCE
+	// for odroid go advance
+	screen.actual_w = 480;
+	screen.actual_h = 320;
+#endif
+
+#if defined(ODROID_GO_SUPER)
+        screen.actual_w = 854;
+        screen.actual_h = 480;
+#endif
+
+	SDL_DisplayMode DM;
+	SDL_GetCurrentDisplayMode(0, &DM);
+	printf("[trngaje] detected resolution = %d x %d\n", DM.w, DM.h);
+    screen.actual_w = DM.w;
+    screen.actual_h = DM.h;
+
+	screen.ppu_x = (float)screen.actual_w / screen.w;
+	screen.ppu_y = (float)screen.actual_h / screen.h;
+
+	
+	
 // 	const auto &best = *SDL_GetVideoInfo();
 // 	fprintf(stderr, "Best video mode reported as: %dx%d bpp=%d hw_available=%u\n",
 // 	    best.current_w, best.current_h, best.vfmt->BitsPerPixel, best.hw_available);

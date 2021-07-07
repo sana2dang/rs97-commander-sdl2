@@ -7,6 +7,7 @@
 #define KEYHOLD_TIMER         2
 
 extern SDL_Surface *ScreenSurface;
+extern SDL_GameController *sdl_cntrl;
 
 CWindow::CWindow(void):
     m_timer(0),
@@ -47,9 +48,68 @@ const int CWindow::execute(void)
             {
                 return m_retVal;
             }
+#if 0
+			else if (l_event.type == SDL_JOYAXISMOTION)
+			{
+                SDL_Event key_event;
+				
+				if (l_event.jaxis.value != 0)
+				{
+					if (l_event.jaxis.axis == 0)	// left/right
+					{
+						if (l_event.jaxis.value < 0)
+							key_event.key.keysym.sym = MYKEY_LEFT;
+						else if (l_event.jaxis.value > 0)		
+							key_event.key.keysym.sym = MYKEY_RIGHT;						
+					}
+					else if (l_event.jaxis.axis == 1) // up/down
+					{
+						if (l_event.jaxis.value < 0)
+							key_event.key.keysym.sym = MYKEY_UP;
+						else if (l_event.jaxis.value > 0)
+							key_event.key.keysym.sym = MYKEY_DOWN;
+					}
+						
+					l_render = this->keyPress(key_event);
+					if (m_retVal)
+						l_loop = false;		
+				}
+				
+			}
+			else if (l_event.type == SDL_JOYHATMOTION)
+			{
+                //printf("hat:%d, %d\n",l_event.jhat.hat, l_event.jhat.value);
+                SDL_Event key_event;
+				
+				if (l_event.jhat.value != 0)
+				{
+					switch (l_event.jhat.value)
+					{
+					case SDL_HAT_UP: //up
+						key_event.key.keysym.sym = MYKEY_UP;
+						break;
+					case SDL_HAT_DOWN: //down
+						key_event.key.keysym.sym = MYKEY_DOWN;
+						break;
+					case SDL_HAT_LEFT: //left
+						key_event.key.keysym.sym = MYKEY_LEFT;
+						break;
+					case SDL_HAT_RIGHT: //right
+						key_event.key.keysym.sym = MYKEY_RIGHT;
+						break;
+	 
+					default:
+						break;
+					}
+					
+					l_render = this->keyPress(key_event);
+					if (m_retVal)
+						l_loop = false;		
+				}				
+			}
             else if(l_event.type == SDL_JOYBUTTONDOWN)
             {
-#ifdef ODROID_GO_ADVANCE
+#if  0 //def ODROID_GO_ADVANCE
                 // printf("key:%d\n",l_event.jbutton.button);
                 SDL_Event key_event;
                 switch (l_event.jbutton.button)
@@ -97,7 +157,123 @@ const int CWindow::execute(void)
                 if (m_retVal)
                     l_loop = false;
 #endif
+
+
+#if 1
+                // printf("key:%d\n",l_event.jbutton.button);
+                SDL_Event key_event;
+                switch (l_event.jbutton.button)
+                {
+                case 2: //b
+                    key_event.key.keysym.sym = MYKEY_PARENT;
+                    break;
+                case 1: //a
+                    key_event.key.keysym.sym = MYKEY_OPEN;
+                    break;
+                case 0: //x
+                    key_event.key.keysym.sym = MYKEY_OPERATION;
+                    break;
+                case 3: //y
+                    key_event.key.keysym.sym = MYKEY_SYSTEM;
+                    break;
+                case 4: //l
+                    key_event.key.keysym.sym = MYKEY_PAGEUP;
+                    break;
+                case 5: //r
+                    key_event.key.keysym.sym = MYKEY_PAGEDOWN;
+                    break;
+                case 8://select
+                    key_event.key.keysym.sym = MYKEY_SELECT;
+                    break;
+                case 9://start
+                    key_event.key.keysym.sym = MYKEY_TRANSFER;
+                    break; 
+                default:
+                    break;
+                }
+                l_render = this->keyPress(key_event);
+                if (m_retVal)
+                    l_loop = false;
+#endif
             }
+#endif
+			else if (l_event.type == SDL_CONTROLLERBUTTONDOWN)
+			{
+				//printf("[trngaje] SDL_CONTROLLERBUTTONDOWN\n");
+                SDL_Event key_event;
+                switch (l_event.cbutton.button)
+                {
+                case SDL_CONTROLLER_BUTTON_DPAD_UP: //up
+                    key_event.key.keysym.sym = MYKEY_UP;
+                    break;
+                case SDL_CONTROLLER_BUTTON_DPAD_DOWN: //down
+                    key_event.key.keysym.sym = MYKEY_DOWN;
+                    break;
+                case SDL_CONTROLLER_BUTTON_DPAD_LEFT: //left
+                    key_event.key.keysym.sym = MYKEY_LEFT;
+                    break;
+                case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: //right
+                    key_event.key.keysym.sym = MYKEY_RIGHT;
+                    break;
+                case SDL_CONTROLLER_BUTTON_B: //b
+                    key_event.key.keysym.sym = MYKEY_PARENT;
+                    break;
+                case SDL_CONTROLLER_BUTTON_A: //a
+                    key_event.key.keysym.sym = MYKEY_OPEN;
+                    break;
+                case SDL_CONTROLLER_BUTTON_X: //x
+                    key_event.key.keysym.sym = MYKEY_OPERATION;
+                    break;
+                case SDL_CONTROLLER_BUTTON_Y: //y
+                    key_event.key.keysym.sym = MYKEY_SYSTEM;
+                    break;
+                case SDL_CONTROLLER_BUTTON_LEFTSHOULDER: //l
+                    key_event.key.keysym.sym = MYKEY_PAGEUP;
+                    break;
+                case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: //r
+                    key_event.key.keysym.sym = MYKEY_PAGEDOWN;
+                    break;
+                case SDL_CONTROLLER_BUTTON_BACK://select
+                    key_event.key.keysym.sym = MYKEY_SELECT;
+                    break;
+                case SDL_CONTROLLER_BUTTON_START://start
+                    key_event.key.keysym.sym = MYKEY_TRANSFER;
+                    break; 
+                default:
+                    break;
+                }
+                l_render = this->keyPress(key_event);
+                if (m_retVal)
+                    l_loop = false;
+				
+			}
+			else if (l_event.type == SDL_CONTROLLERAXISMOTION)
+			{
+				//printf("[trngaje] SDL_CONTROLLERAXISMOTION\n");
+                SDL_Event key_event;
+				
+				if (l_event.caxis.value != 0)
+				{
+					if (l_event.caxis.axis == 0)	// left/right
+					{
+						if (l_event.caxis.value < 0)
+							key_event.key.keysym.sym = MYKEY_LEFT;
+						else if (l_event.caxis.value > 0)		
+							key_event.key.keysym.sym = MYKEY_RIGHT;						
+					}
+					else if (l_event.caxis.axis == 1) // up/down
+					{
+						if (l_event.caxis.value < 0)
+							key_event.key.keysym.sym = MYKEY_UP;
+						else if (l_event.caxis.value > 0)
+							key_event.key.keysym.sym = MYKEY_DOWN;
+					}
+						
+					l_render = this->keyPress(key_event);
+					if (m_retVal)
+						l_loop = false;		
+				}
+			}
         }
         // Handle key hold
         if (l_loop)
